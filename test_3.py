@@ -2,8 +2,7 @@ from solution_3 import NavalBattle
 
 player1 = NavalBattle('#')
 player1.shot(6, 2)
-NavalBattle.playing_field = [
-[0, 1, 1, 1, 0, 0, 0, 0, 0, 1],
+NavalBattle.playing_field = [[0, 1, 1, 1, 0, 0, 0, 0, 0, 1],
 [0, 0, 0, 0, 0, 1, 0, 0, 0, 1],
 [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
 [0, 0, 0, 0, 0, 1, 0, 0, 1, 0],

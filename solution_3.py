@@ -13,68 +13,54 @@ class NavalBattle:
         NavalBattle.__player_symbols.append(self.__symbol)
 
     @staticmethod
+    def is_space_occupied(x, y):
+        try:
+            return NavalBattle.playing_field[y][x] == 1 or \
+                   NavalBattle.is_adjacent_space_occupied(x, y) \
+                   or not ((0 <= x < 10) and (0 <= y < 10))
+        except IndexError:
+            return True
+
+    @staticmethod
+    def is_adjacent_space_occupied(x, y):
+        for dx, dy in ((0, 1), (0, -1), (1, 0), (-1, 0), (1, 1),
+                        (1, -1), (-1, 1), (-1, -1)):
+            #Проверка на выход за пределы игрового поля
+            if (0 <= x + dx < 10) and (0 <= y + dy < 10):
+                if NavalBattle.playing_field[y + dy][x + dx] == 1:
+                    return True
+        return False
+    
+    @staticmethod
     def check_field(x, y, ship_length):
-        right_free = True
-        #Check right
-        for i in range(ship_length):
-            try:
-                if NavalBattle.playing_field[y][x + i] == 1:
-                    right_free = False
-                    break
-            except IndexError:
-                right_free = False
-                break
-        
-        up_free = True
-        #Check up
-        for i in range(ship_length):
-            try:
-                if NavalBattle.playing_field[y - i][x] == 1:
-                    up_free = False
-                    break
-            except IndexError:
-                up_free = False
-                break
+        orients_dict = {"right": True, "up": True, "left": True, "down": True}
 
-        left_free = True
-        #Check left
-        for i in range(ship_length):
-            try:
-                if NavalBattle.playing_field[y][x - i] == 1:
-                    left_free = False
-                    break
-            except IndexError:
-                left_free = False
-                break
+        if NavalBattle.is_space_occupied(x, y):
+            return []
 
-        down_free = True
-        #Check down
-        for i in range(ship_length):
-            try:
-                if NavalBattle.playing_field[y + i][x] == 1:
-                    down_free = False
+        for orient in orients_dict:
+            for i in range(ship_length):
+                try:
+                    if NavalBattle.is_space_occupied(x + (i if orient == "right" else 0) - (i if orient == "left" else 0),
+                                                        y + (i if orient == "down" else 0) - (i if orient == "up" else 0)):
+                        orients_dict[orient] = False
+                        break
+                except IndexError:
+                    orients_dict[orient] = False
                     break
-            except IndexError:
-                down_free = False
-                break
-        
-        orient_dict = {1: right_free, 2: up_free, 3: left_free, 4: down_free}
-        poss_orient = [k for k, v in orient_dict.items() if v]
-        return poss_orient
+
+        return [orient for orient, is_possible in orients_dict.items() if is_possible]
 
     @staticmethod
     def place_ship(x, y, ship_length, orient):
-        if orient == 1:
-            for i in range(ship_length):
+        for i in range(ship_length):
+            if orient == "right":
                 NavalBattle.playing_field[y][x + i] = 1
-        elif orient == 2:
-            for i in range(ship_length):
-                NavalBattle.playing_field[y + i][x] = 1
-        elif orient == 3:
-            for i in range(ship_length):
+            elif orient == "up":
+                NavalBattle.playing_field[y - i][x] = 1
+            elif orient == "left":
                 NavalBattle.playing_field[y][x - i] = 1
-        elif orient == 4:
-            for i in range(ship_length):
+            elif orient == "down":
                 NavalBattle.playing_field[y + i][x] = 1
         return
 
@@ -82,16 +68,18 @@ class NavalBattle:
     def new_game():
         #Create new game
         NavalBattle.playing_field = [[0] * 10 for _ in range(10)]
-        
+        ship_quant = 1
         for ship_length in range(4, 0, -1):
-            ship_quant = 1
             for _ in range(ship_quant):
-                orient = []
-                while orient == []:
-                    x1 = random.randint(0, 9)
-                    y1 = random.randint(0, 9)
-                    orient = random.choice(NavalBattle.check_field(x1, y1, ship_length))
-                NavalBattle.place_ship(x1, y1, ship_length, orient)
+                orient = ""
+                while orient == "":
+                    x = random.randint(0, 9)
+                    y = random.randint(0, 9)
+                    try:
+                        orient = random.choice(NavalBattle.check_field(x, y, ship_length))
+                    except IndexError:
+                        continue
+                NavalBattle.place_ship(x, y, ship_length, orient)
             ship_quant += 1
 
         return
@@ -111,16 +99,26 @@ class NavalBattle:
         if NavalBattle.playing_field[y - 1][x - 1] == 1:
             NavalBattle.playing_field[y - 1][x - 1] = self.__symbol
             print("Попал!")
+            return
         else:
             NavalBattle.playing_field[y - 1][x - 1] = "o"
             print("Мимо!")
+            return
 
     @staticmethod
     def show():
         for y in NavalBattle.playing_field:
             for x in y:
                 if x == 0 or x == 1:
-                    print('~', end='')
+                    print('~', end=' ')
                 else:                 
-                    print(f'{x}', end='')
+                    print(f'{x}', end=' ')
+            print()
+
+
+    @staticmethod
+    def show_uncovered():
+        for y in NavalBattle.playing_field:
+            for x in y:
+                print(f'{x}', end=' ')
             print()
