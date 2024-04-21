@@ -4,9 +4,9 @@ import re
 class RomanNumber:
     __rom_digits = {"M": 1000, "D": 500, "C": 100, "L": 50, "X": 10, "V": 5, "I": 1}
     
-    __roman_numbers = {'M': 1000, 'CM': 900, 'D': 500, 'CD': 400,
-                        'C': 100, 'XC': 90, 'L': 50, 'XL': 40,
-                        'X': 10, 'IX': 9, 'V': 5, 'IV': 4, 'I': 1}
+    __roman_numbers = {"M": 1000, "CM": 900, "D": 500, "CD": 400,
+                        "C": 100, "XC": 90, "L": 50, "XL": 40,
+                        "X": 10, "IX": 9, "V": 5, "IV": 4, "I": 1}
 
     def __init__(self, value=None):
         self.__rom_value = None
@@ -15,7 +15,8 @@ class RomanNumber:
 
         self.__int_value = None
         try:
-            value = int(value)
+            if value == int(value):
+                value = int(value)
         except:
             pass
         if isinstance(value, int) and RomanNumber.is_int(value):
@@ -65,13 +66,13 @@ class RomanNumber:
     
     def __truediv__(self, other):
         if isinstance(other, RomanNumber):
-            return RomanNumber(self.__int_value // other.__int_value)
+            return RomanNumber(self.__int_value / other.__int_value)
         
         return RomanNumber()
     
     def __rtruediv__(self, other):
         if isinstance(other, RomanNumber):
-            return RomanNumber(self.__int_value // other.__int_value)
+            return RomanNumber(self.__int_value / other.__int_value)
         
         return RomanNumber()
     
@@ -115,40 +116,68 @@ class RomanNumber:
         if isinstance(other, RomanNumber):
             self.__int_value += other.__int_value
             self.__rom_value = self.to_roman(self.__int_value)
+            return self
+        
+        self.__rom_value = None
+        return self.rom_value
 
     def __isub__(self, other):
         if isinstance(other, RomanNumber):
             self.__int_value -= other.__int_value
             self.__rom_value = self.to_roman(self.__int_value)
+            return self
+        
+        self.__rom_value = None
+        return self.rom_value
         
     def __imul__(self, other):
         if isinstance(other, RomanNumber):
             self.__int_value *= other.__int_value
             self.__rom_value = self.to_roman(self.__int_value)
+            return self
+        
+        self.__rom_value = None
+        return self.rom_value
     
     def __itruediv__(self, other):
         if isinstance(other, RomanNumber):
             self.__int_value /= other.__int_value
             self.__rom_value = self.to_roman(self.__int_value)
+            return self
+        
+        self.__rom_value = None
+        return self.rom_value
     
     def __ifloordiv__(self, other):
         if isinstance(other, RomanNumber):
             self.__int_value //= other.__int_value
             self.__rom_value = self.to_roman(self.__int_value)
+            return self
+        
+        self.__rom_value = None
+        return self.rom_value
     
     def __imod__(self, other):
         if isinstance(other, RomanNumber):
             self.__int_value %= other.__int_value
             self.__rom_value = self.to_roman(self.__int_value)
+            return self
+        
+        self.__rom_value = None
+        return self.rom_value
     
     def __ipow__(self, other):
         if isinstance(other, RomanNumber):
             self.__int_value **= other.__int_value
             self.__rom_value = self.to_roman(self.__int_value)
+            return self
+        
+        self.__rom_value = None
+        return self.rom_value
 
     @staticmethod
     def to_roman(number):
-        roman = ''
+        roman = ""
         for letter, value in RomanNumber.__roman_numbers.items():
             while number >= value:
                 roman += letter
