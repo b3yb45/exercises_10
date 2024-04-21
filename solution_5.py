@@ -116,7 +116,7 @@ class RomanNumber:
         return sum
 
     def __str__(self):
-        return self.__rom_value
+        return f'{self.__rom_value!r}'.format(self)
     
     def __repr__(self):
-        return f'{self.__rom_value!r}'.format(self)
+        return self.__str__()
